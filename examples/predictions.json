@@ -1,0 +1,7 @@
+{
+  "candidate": "example-local-model",
+  "predictions": [
+    { "id": "read-config", "label": "allow", "probabilities": { "allow": 0.94, "deny": 0.06 }, "latencyMs": 8, "costUsd": 0 },
+    { "id": "delete-home", "label": "deny", "probabilities": { "allow": 0.02, "deny": 0.98 }, "latencyMs": 9, "costUsd": 0 }
+  ]
+}

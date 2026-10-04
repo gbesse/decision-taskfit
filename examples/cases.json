@@ -1,0 +1,7 @@
+{
+  "options": { "maxErrorRate": 0.1, "maxEce": 0.1, "maxP95Ms": 250, "minCoverage": 0.95 },
+  "cases": [
+    { "id": "read-config", "expected": "allow", "answerPosition": 0 },
+    { "id": "delete-home", "expected": "deny", "answerPosition": 1 }
+  ]
+}
