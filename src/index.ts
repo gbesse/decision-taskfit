@@ -90,9 +90,9 @@ export function auditDataset(cases: TaskCase[]): DatasetAudit {
 
 function validateProbabilities(prediction: TaskPrediction, labels: string[]): void {
   if (!prediction.probabilities) return;
-  const values = labels.map(label => prediction.probabilities![label] ?? 0);
-  assert(Object.values(prediction.probabilities).every(value => Number.isFinite(value) && value >= 0 && value <= 1), `${prediction.id}: invalid probability`);
-  assert(Math.abs(values.reduce((sum, value) => sum + value, 0) - 1) <= .001, `${prediction.id}: probabilities must sum to one across dataset labels`);
+  const entries = Object.entries(prediction.probabilities);
+  assert(entries.every(([label, value]) => labels.includes(label) && Number.isFinite(value) && value >= 0 && value <= 1), `${prediction.id}: invalid probability label or value`);
+  assert(Math.abs(entries.reduce((sum, [, value]) => sum + value, 0) - 1) <= .001, `${prediction.id}: probabilities must sum to one`);
 }
 
 export function evaluateCandidate(candidate: string, cases: TaskCase[], predictions: TaskPrediction[], options: EvaluationOptions = {}): TaskFitReport {
@@ -115,6 +115,7 @@ export function evaluateCandidate(candidate: string, cases: TaskCase[], predicti
     assert(Number.isFinite(weight) && weight > 0, `${item.id}: weight must be positive`);
     validateProbabilities(prediction, labels);
     const abstained = prediction.abstained === true || !prediction.label;
+    if (!abstained) assert(labels.includes(prediction.label!), `${item.id}: predicted label is not present in the dataset label set`);
     const correct = !abstained && prediction.label === item.expected;
     correctness.push({ value: correct ? 1 : 0, weight });
     if (abstained) losses.push({ value: options.abstentionCost ?? 1, weight });

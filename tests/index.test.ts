@@ -39,3 +39,7 @@ test("counts abstention as a false negative in macro F1", () => {
   assert.ok(report.macroF1 < 1);
   assert.equal(report.coverage, .6667);
 });
+
+test("rejects labels outside the task contract", () => {
+  assert.throws(() => evaluateCandidate("invalid", cases, cases.map(item => ({ id: item.id, label: "maybe" }))), /not present/);
+});
