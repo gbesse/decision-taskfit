@@ -33,3 +33,9 @@ test("ranks passing low-loss candidates first", () => {
   assert.equal(rankCandidates([bad, good])[0]?.candidate, "good");
   assert.equal(bad.passed, false);
 });
+
+test("counts abstention as a false negative in macro F1", () => {
+  const report = evaluateCandidate("abstaining", cases, cases.map(item => item.id === "b" ? { id: item.id, abstained: true } : { id: item.id, label: item.expected }));
+  assert.ok(report.macroF1 < 1);
+  assert.equal(report.coverage, .6667);
+});

@@ -124,6 +124,10 @@ export function evaluateCandidate(candidate: string, cases: TaskCase[], predicti
       const row = confusion.get(item.expected) ?? new Map<string, number>();
       row.set(prediction.label!, (row.get(prediction.label!) ?? 0) + weight);
       confusion.set(item.expected, row);
+    } else {
+      const row = confusion.get(item.expected) ?? new Map<string, number>();
+      row.set("__abstain__", (row.get("__abstain__") ?? 0) + weight);
+      confusion.set(item.expected, row);
     }
     if (prediction.probabilities) {
       const chosen = prediction.label ?? Object.entries(prediction.probabilities).sort((a, b) => b[1] - a[1])[0]![0];
