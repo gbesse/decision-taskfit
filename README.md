@@ -36,3 +36,30 @@ Decision TaskFit is an evaluator, not proof of safety. Holdouts must be
 representative, independently reviewed and protected from training leakage.
 
 MIT licensed. Independent of TypeSafe, OpenAI and model vendors.
+
+
+## 2026-11-12 — FR / EN / ES
+
+FR : Évaluer chaque groupe avec les mêmes options et exposer ses échecs derrière le score global.
+
+EN: Evaluate groups with unchanged options and expose failures hidden by global scores.
+
+ES: Evaluar grupos con opciones iguales y exponer fallos ocultos por puntuaciones globales.
+
+
+## 2026-11-12 — FR / EN / ES
+
+FR : Évaluer les groupes dans le même univers de labels déclaré (labelUniverse), sans réajuster les seuils.
+
+EN: Evaluate groups within the same declared labelUniverse without refitting thresholds.
+
+ES: Evaluar grupos en mismo labelUniverse declarado sin reajustar umbrales.
+
+
+## 2026-11-12 — FR / EN / ES
+
+FR : Évaluer les groupes dans le même univers de labels déclaré (labelUniverse), sans réajuster les seuils.
+
+EN: Evaluate groups within the same declared labelUniverse without refitting thresholds.
+
+ES: Evaluar grupos en mismo labelUniverse declarado sin reajustar umbrales.

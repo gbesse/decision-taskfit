@@ -19,6 +19,7 @@ export interface TaskPrediction {
 export interface LossMatrix { [expected: string]: Record<string, number>; }
 
 export interface EvaluationOptions {
+  labelUniverse?: string[];
   lossMatrix?: LossMatrix;
   abstentionCost?: number;
   maxErrorRate?: number;
@@ -100,7 +101,8 @@ export function evaluateCandidate(candidate: string, cases: TaskCase[], predicti
   assert(!audit.duplicateIds.length, "Dataset case IDs must be unique");
   const byId = new Map(predictions.map(prediction => [prediction.id, prediction]));
   assert(byId.size === predictions.length, "Prediction IDs must be unique");
-  const labels = Object.keys(audit.labels);
+  const labels = options.labelUniverse ?? Object.keys(audit.labels);
+  assert(labels.length>0&&new Set(labels).size===labels.length&&labels.every(x=>typeof x==="string"&&x.length>0)&&cases.every(c=>labels.includes(c.expected)),"Univers de labels invalide / Invalid label universe / Universo de etiquetas inválido");
   const confusion = new Map<string, Map<string, number>>();
   const correctness: { value: number; weight: number }[] = [];
   const losses: { value: number; weight: number }[] = [];
@@ -175,4 +177,12 @@ export function evaluateCandidate(candidate: string, cases: TaskCase[], predicti
 
 export function rankCandidates(reports: TaskFitReport[]): TaskFitReport[] {
   return [...reports].sort((a, b) => Number(b.passed) - Number(a.passed) || a.expectedLoss - b.expectedLoss || b.accuracy - a.accuracy || (a.latency?.p95Ms ?? Infinity) - (b.latency?.p95Ms ?? Infinity) || a.candidate.localeCompare(b.candidate));
+}
+
+export function evaluateCandidateByGroup(candidate:string,cases:TaskCase[],predictions:TaskPrediction[],options:EvaluationOptions={}){
+ if(cases.some(c=>c.group!==undefined&&(typeof c.group!=='string'||!c.group)))throw new TypeError('Groupes invalides / Invalid groups / Grupos inválidos');
+ const universe=options.labelUniverse??[...new Set(cases.map(c=>c.expected))];
+ const global=evaluateCandidate(candidate,cases,predictions,{...options,labelUniverse:universe});const groups=new Map<string|undefined,TaskCase[]>();
+ for(const c of cases){if(!groups.has(c.group))groups.set(c.group,[]);groups.get(c.group)!.push(c);}
+ return {global,groups:[...groups].map(([group,subset])=>{const ids=new Set(subset.map(c=>c.id));return {group:group??null,report:evaluateCandidate(candidate,subset,predictions.filter(p=>ids.has(p.id)),{...options,labelUniverse:universe})};}),groupThresholdsRefit:false,simultaneousConfidenceGuarantee:false};
 }
